@@ -11,7 +11,7 @@ int main(){
 
   //car config
   int carWidth = 60;int carHeight = 100;float carX = (width/2) - (carWidth)/2;float carY = (height/2) - (carHeight/2);
-  float carSpeed = 5.00f;
+  float carSpeed = 12.00f;
   float carRotation = 90.0f;
   Vector2 carPos = {.x = 60 /2,.y= 100/2};
 
@@ -30,17 +30,22 @@ int main(){
   };
 
   //world config
-  int worldWidth = 2000; 
-  int worldHeight = 2000;
+  int worldWidth = 10000; 
+  int worldHeight = 10000;
   int worldWidthLimit = worldWidth/bg.width ;
   int worldHeightLimit= worldHeight/bg.height;
+  printf("worldWidthLimit = %d\n", worldWidthLimit);
+  printf("worldHeightLimit = %d\n", worldHeightLimit);
+
 
   //Camera Config
   Camera2D camera = {0};
   camera.target =(Vector2){0,0};
-  camera.offset = (Vector2){0,0};
+  camera.offset = (Vector2){width/2,height/2};
   camera.rotation = 0.0f;
   camera.zoom = 1.0f;
+
+
   while(!WindowShouldClose()){
     //Forward and steer
     if(IsKeyDown(KEY_UP) || IsKeyDown(KEY_W) ){
@@ -79,15 +84,26 @@ int main(){
         DrawTexture(bg,bg.width*i,bg.height*j,WHITE);
       }
     }
+
+    //targt the car
+    camera.target.x = (carWidth+carX);
+    camera.target.y = (carHeight + carY);
+
     //Camera Constraints
-    
-   camera.offset.x = -(carX+carWidth)+width/2; 
-   camera.offset.y = -(carY+carHeight)+height/2; 
+    if(camera.target.x<=width/2){
+      camera.target.x = width/2;
+    }
+    if(camera.target.x>=worldWidth-width){
+      camera.target.x = worldWidth-width;
+    }
+    if(camera.target.y<=height/2){
+      camera.target.y = height/2;
+    }
+    if(camera.target.y>=worldHeight-height){
+      camera.target.y = worldHeight - height;
+    }
     
     //Draw the car
-    printf("camera.target.x = %0.2f\n", camera.offset.x+carWidth);
-    printf("camera.target.y = %0.2f\n", camera.offset.y+carHeight-carY);
-    printf("world LIMIT = %d\n\t\n", worldWidthLimit*bg.width/2);
     DrawTexturePro(texture,sourceRect,car,carPos,carRotation,WHITE);
 
     EndDrawing();
